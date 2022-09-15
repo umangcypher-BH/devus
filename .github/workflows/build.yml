@@ -1,7 +1,20 @@
-on : push
 jobs:
-  first-job:
-    runs-on: windows-latest
-       steps:
-       -run: node  --version
-       -run: npm  --version
+  build_and_test:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run production
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run PHP tests
+        run: vendor/bin/phpunit --stop-on-error --stop-on-failure
